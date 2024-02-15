@@ -51,7 +51,35 @@ public class AccountDao implements AccountDaoInterface{
 
     @Override
     public void makeTransaction(Account ac1, Account ac2, Integer quantity) {
+        PreparedStatement ps1 = null;
+        PreparedStatement ps2 = null;
 
+        try {
+            conn.setAutoCommit(false);
+            String decreaseQuantitySql = "update account set balance = balance - ? where id = ?";
+            ps1 = conn.prepareStatement(decreaseQuantitySql);
+            ps1.setInt(1, quantity);
+            ps1.setInt(2, ac1.id());
+
+            ps1.executeUpdate();
+            log.info(String.format("decrease quantity of %s's account ", ac1.name()));
+
+            String addQuantitySql = "update account set balance = balance + ? where id = ?";
+            ps2 = conn.prepareStatement(addQuantitySql);
+            ps2.setInt(1, quantity);
+            ps2.setInt(2, ac2.id());
+
+            ps2.executeUpdate();
+            log.info(String.format("add quantity in %s's account", ac2.name()));
+
+            conn.commit();
+            conn.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            closeStatement(ps1);
+            closeStatement(ps2);
+        }
     }
 
     @Override
@@ -61,6 +89,7 @@ public class AccountDao implements AccountDaoInterface{
         ResultSet rs = null;
         try{
             ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
             rs = ps.executeQuery();
             if(rs.next()) {
                 return new Account(rs.getInt("id"), rs.getString("name"), rs.getInt("balance"));
