@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 
 public class Main {
-    private static Logger log = LoggerFactory.getLogger(Main.class);
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static void main(String[] args) {
         Connection conn = JdbcConnection.getConnection();
         AccountDaoInterface accountDao = new AccountDao(conn);

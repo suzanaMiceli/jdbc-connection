@@ -8,8 +8,8 @@ import java.sql.*;
 
 public class AccountDao implements AccountDaoInterface{
 
-    private Connection conn;
-    private static Logger log = LoggerFactory.getLogger(AccountDao.class);
+    private final Connection conn;
+    private static final Logger log = LoggerFactory.getLogger(AccountDao.class);
 
     public AccountDao(Connection conn) {
         this.conn = conn;
